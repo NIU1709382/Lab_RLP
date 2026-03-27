@@ -1,0 +1,47 @@
+# 1. Sistema Operatiu (Amaga els arxius invisibles de Mac i Windows)
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 2. Python i Raspberry Pi (Visió / IA)
+# Evita pujar els entorns virtuals pesats i arxius compilats
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+*.log
+
+# 3. Web i Cloud (Node.js / React)
+# Evita pujar les milers de llibreries d'internet
+node_modules/
+dist/
+build/
+.next/
+npm-debug.log
+yarn-error.log
+
+# 4. Arduino i C++ (Hardware)
+# Ignora els arxius binaris i de compilació que genera l'IDE d'Arduino
+*.elf
+*.hex
+*.bin
+build/
+
+# 5. Disseny 3D i CAD (Models)
+# Ignorem els arxius de recuperació temporal (backup) que fan SolidWorks/Fusion360
+*.bak
+*.bck
+~$*.SLDPRT
+~$*.SLDASM
+*.lck
+
+# Aquí s'amaguen contrasenyes del WiFi i les claus de l'API de Gemini
+.env
+.env.local
+secrets.json
+
+# 7. Configuracions personals dels editors de codi
+.vscode/
+.idea/
