@@ -17,12 +17,12 @@ Aquest projecte utilitza una arquitectura de *Monorepo* dividida per dominis tec
 * `/1_arduino_hardware`: Lògica de control de motors de baix nivell, actuadors i lectura de sensors d'ultrasons (C++).
 * `/2_raspberry_brain`: Cervell central. Inclou la visió artificial, la comunicació amb Gemini, la navegació d'alt nivell i la gestió d'estats (Python).
 * `/3_web_cloud`: Interfície d'usuari (Frontend) i lògica de base de dades per al control familiar.
-* `/4_cad_models`: Arxius de disseny 3D (.STL) del xassís i el dispensador.
+* `/4_design_models`: Arxius de disseny 3D (.STL) del xassís i el dispensador.
 
 ## ⚙️ Requisits de Maquinari
 * **Processament:** Raspberry Pi 5 (Cervell) + Arduino UNO R3 (Controlador de maquinari).
 * **Sensors:** Càmera Fisheye 5MP, Micròfon USB, 3x Ultrasons HC-SR04.
-* **Actuadors:** 2x Motors DC 250:1 (Tracció), Servo Feetech amb Feedback (Dispensador), Servos MG996R (Pan & Tilt).
+* **Actuadors:** 2x Motors DC 250:1 (Tracció), Servo 360º (Dispensador), Servos MG996R (Pan & Tilt).
 * **Energia:** Bateria LiPo 3S 11.1V amb reguladors DC-DC (5.1V / 3A).
 
 ---
