@@ -38,13 +38,17 @@ def escoltar():
         return text.lower()
     except:
         return ""
+    
+def cargar_personalitat(path):
+    with open(path, 'r', encoding='utf-8') as f:
+        return f.read()
 
 def demanar_a_ollama(pregunta):
     print("🧠 CARE-E está pensando...")
     response = ollama.chat(model='llama3.2:3b', messages=[
         {
             'role': 'system', 
-            'content': 'Eres CARE-E, un robot asistente amable para personas mayores. Responde siempre en español. Sé muy breve, cariñoso y claro.'
+            'content': cargar_personalitat('../prompts/personalitat.txt')
         },
         {'role': 'user', 'content': pregunta},
     ], options={
@@ -59,7 +63,7 @@ while True:
     frase = escoltar()
     
     # Paraules clau adaptades a com podria entendre el nom en castellà
-    paraules_clau = ["care-e", "keri", "quiere", "carrie", "caeré", "cari", "cari"]
+    paraules_clau = ["care-e", "keri", "quiere", "carrie", "caeré", "cari"]
     
     if any(nom in frase for nom in paraules_clau):
         for nom in paraules_clau:
