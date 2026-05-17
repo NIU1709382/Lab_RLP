@@ -5,5 +5,6 @@
 
 void inicialitzarServo(int pin, Servo &servo);
 void moureServo(int inici, int final, Servo &servo);
+void anarPosicio(int angle, Servo &servo);
 
 #endif

@@ -29,3 +29,7 @@ void moureServo(int inici, int final, Servo &servo){
 
 
 }
+
+void anarPosicio(int angle, Servo &servo){
+    servo.write(angle);
+}
