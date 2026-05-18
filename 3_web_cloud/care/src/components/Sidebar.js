@@ -12,7 +12,7 @@ const MoonIcon = () => (<svg width="14" height="14" viewBox="0 0 24 24" fill="no
 
 const navItems = [
   { href: "/dashboard",             icon: "⊞",  label: "Dashboard" },
-  { href: "/dashboard/medications", icon: "💊", label: "Medicació" },
+  { href: "/dashboard/medications",           icon: "💊", label: "Medicació" },
   { href: "/dashboard/activity",    icon: "🕒", label: "Activitat" },
   { href: "/dashboard/robot",       icon: "🤖", label: "Control Robot" },
   { href: "/dashboard/reports",     icon: "📊", label: "Informes" },
