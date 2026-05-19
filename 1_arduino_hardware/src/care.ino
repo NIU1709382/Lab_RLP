@@ -2,6 +2,7 @@
 #include "control_servo.h"
 #include "control_ultraso.h"
 #include "control_motor.h"
+#include "control_servo_conjunt.h"
 
 
 //constants
@@ -13,8 +14,7 @@ const int LPWM1 = 6;
 
 
 //variables
-Servo servo1, servo2, servo3, servo4, servo5;
-Servo microServo1, microServo2;
+Servo servo1;
 
 void setup(){
 
@@ -22,6 +22,7 @@ void setup(){
 
     //inicialitzarServo(PIN_SERVO1, servo1);
     //inicialitzarUltraso(PIN_ECHO1, PIN_TRIG1);
+    //inicialitzarServos();
     inicialitzarMotor(RPWM1, LPWM1);
 
 }
@@ -43,6 +44,17 @@ void loop(){
     //}
 
     //delay(500); // Espera entre lectures
+
+    //prova servos conjunt
+
+    //moureServo(0, 0);
+    //delay(1000);
+
+    //moureServo(0, 90);
+    //delay(1000);
+
+    //moureServo(0, 180);
+    //delay(1000);
 
     //prova motor
     motorEndavant(RPWM1, LPWM1, 150);
