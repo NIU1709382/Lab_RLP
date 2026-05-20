@@ -11,6 +11,8 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from coppeliasim_zmqremoteapi_client import RemoteAPIClient
 import math
+import matplotlib
+matplotlib.use('TkAgg')
 
 # ─────────────────────────────────────────────────────────────────
 # PARÀMETRES — AJUSTA AQUÍ SENSE TOCAR RES MÉS
@@ -284,7 +286,7 @@ def main():
     print("  SLAM v2 — OV5647 + HC-SR04 x3 — CoppeliaSim")
     print("=" * 52)
 
-    client = RemoteAPIClient()
+    client = RemoteAPIClient(host='172.31.96.1') #ATENCIO: aixo es literalment la ip del meu pc (berni) aixi q s ha de modificar si colebu fer ho servir
     sim    = client.getObject('sim')
     client.setStepping(True)
 
@@ -399,16 +401,16 @@ def main():
                       f"C:{dc:.2f} E:{de:.2f} D:{dd:.2f} → {estat_nav}")
 
             # ── Refresc visual (cada 10 steps) ────────────────
-            if pas % 10 == 0:
+            if pas % 100 == 0:
                 dibuixa(ax_mapa, ax_cam, ax_info,
-                        mapa_log_odds, trajectoria, rcx, rcy, yaw,
-                        img_cam_actual, estat_nav, desc, dc, de, dd, pas)
-                plt.draw(); plt.pause(0.001)
+                      mapa_log_odds, trajectoria, rcx, rcy, yaw,
+            	      img_cam_actual, estat_nav, desc, dc, de, dd, pas)
+                plt.savefig('/mnt/c/Users/berna/Lab_RLP/2_raspberry_brain/conduction/mapa_live.png')  #Del meu pc pk en el ubuntu aquest no fufa gens be tema de obrir finestres
 
-            if img_cam_actual is not None:
-                cv2.imshow("Camara Robot", img_cam_actual)
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    break
+           # if img_cam_actual is not None:
+           #    cv2.imshow("Camara Robot", img_cam_actual)
+           #     if cv2.waitKey(1) & 0xFF == ord('q'):
+           #         break                                       #aquesta part esta comentada pk sino en Ubuntua fa Kaboom
 
     except KeyboardInterrupt:
         print("\n[Ctrl+C] Aturant...")
