@@ -2,7 +2,7 @@
 #include "control_servo.h"
 #include "control_ultraso.h"
 #include "control_motor.h"
-#include "control_servo_conjunt.h"
+//#include "control_servo_conjunt.h"
 
 
 //constants
@@ -11,6 +11,8 @@ const int PIN_ECHO1 = 11;
 const int PIN_TRIG1 = 12;
 const int RPWM1 = 5;
 const int LPWM1 = 6;
+#define ENCODER_A 2
+#define ENCODER_B 3
 
 
 //variables
@@ -23,7 +25,7 @@ void setup(){
     //inicialitzarServo(PIN_SERVO1, servo1);
     //inicialitzarUltraso(PIN_ECHO1, PIN_TRIG1);
     //inicialitzarServos();
-    inicialitzarMotor(RPWM1, LPWM1);
+    inicialitzarMotor(RPWM1, LPWM1, ENCODER_A, ENCODER_B);
 
 }
 
