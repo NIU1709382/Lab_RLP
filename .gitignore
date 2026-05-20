@@ -45,3 +45,13 @@ secrets.json
 # 7. Configuracions personals dels editors de codi
 .vscode/
 .idea/
+
+
+# Fitxers generats pel SLAM
+mapa_live.png
+mapa_occupancy.txt
+mapa_slam_final.png
+trajectoria.txt
+2_raspberry_brain/conduction/mapa_*.png
+2_raspberry_brain/conduction/mapa_*.txt
+2_raspberry_brain/conduction/trajectoria.txt
