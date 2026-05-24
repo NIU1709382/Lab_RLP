@@ -22,7 +22,7 @@ float mesuraDistancia(int pinecho, int pintrig){
     digitalWrite(pintrig, LOW);
     
     //calcula quant triga en tornar
-    durada = pulseIn(pinecho, HIGH);
+    durada = pulseIn(pinecho, HIGH, 30000);
     
     distancia = (durada * 0.034) / 2;
 

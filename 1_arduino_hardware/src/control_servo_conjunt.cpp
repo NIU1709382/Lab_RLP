@@ -6,11 +6,11 @@
 
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 
-#define SERVOMIN  100
-#define SERVOMAX  500
+#define SERVOMIN  150
+#define SERVOMAX  600
 
 void inicialitzarServos() {
-
+    Wire.begin();
     pwm.begin();
     pwm.setPWMFreq(50);
 
