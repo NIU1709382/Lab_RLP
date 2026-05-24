@@ -1,0 +1,77 @@
+[
+    {
+        "id": "945da429-5e55-44da-a142-6fdd28e801b7",
+        "patient_id": "8ba65b5a-2324-4121-a78f-cae7e0566728",
+        "scheduled_time": "23:00:00",
+        "days": [
+            "dilluns",
+            "dimarts",
+            "dimecres",
+            "dijous",
+            "divendres",
+            "dissabte",
+            "diumenge"
+        ],
+        "dose": 1,
+        "active": true,
+        "created_by": "e6937caf-5bde-4c1d-94aa-63ce5705cad8",
+        "created_at": "2026-05-23T10:40:31.948323+00:00",
+        "slot_inventory_id": "70c5eba5-5639-4923-9477-891fad7ef8f6",
+        "slot_inventory": {
+            "id": "70c5eba5-5639-4923-9477-891fad7ef8f6",
+            "slot": 2,
+            "pill_count": 0,
+            "medication_name": "PARACETAMOL ABAMED 1 G COMPRIMIDOS EFG"
+        }
+    },
+    {
+        "id": "c36a3ee7-8019-4ca8-aeb3-40a699b702fb",
+        "patient_id": "8ba65b5a-2324-4121-a78f-cae7e0566728",
+        "scheduled_time": "13:40:00",
+        "days": [
+            "dilluns",
+            "dimarts",
+            "dimecres",
+            "dijous",
+            "divendres",
+            "dissabte",
+            "diumenge"
+        ],
+        "dose": 1,
+        "active": true,
+        "created_by": "e6937caf-5bde-4c1d-94aa-63ce5705cad8",
+        "created_at": "2026-05-23T10:44:20.309491+00:00",
+        "slot_inventory_id": "dc377663-c60f-4348-80ed-082f82959726",
+        "slot_inventory": {
+            "id": "dc377663-c60f-4348-80ed-082f82959726",
+            "slot": 3,
+            "pill_count": 19,
+            "medication_name": "ABACAVIR/LAMIVUDINA SANDOZ 600 MG/300 MG COMPRIMIDOS RECUBIERTOS CON PELICULA EFG"
+        }
+    },
+    {
+        "id": "525bc8ed-f5ae-4d66-8542-05e574578e6b",
+        "patient_id": "8ba65b5a-2324-4121-a78f-cae7e0566728",
+        "scheduled_time": "00:20:00",
+        "days": [
+            "dilluns",
+            "dimarts",
+            "dimecres",
+            "dijous",
+            "divendres",
+            "dissabte",
+            "diumenge"
+        ],
+        "dose": 1,
+        "active": true,
+        "created_by": "e6937caf-5bde-4c1d-94aa-63ce5705cad8",
+        "created_at": "2026-05-23T10:47:44.551117+00:00",
+        "slot_inventory_id": "70c5eba5-5639-4923-9477-891fad7ef8f6",
+        "slot_inventory": {
+            "id": "70c5eba5-5639-4923-9477-891fad7ef8f6",
+            "slot": 2,
+            "pill_count": 0,
+            "medication_name": "PARACETAMOL ABAMED 1 G COMPRIMIDOS EFG"
+        }
+    }
+]

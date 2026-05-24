@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect, createContext } from "react";
-import Sidebar from "@/components/Sidebar";
+import Sidebar from "@/components/layout/Sidebar";
 
 export const ThemeContext   = createContext({ theme: "light", setTheme: () => {} });
 export const SidebarContext = createContext({ open: false,    setOpen:  () => {} });
