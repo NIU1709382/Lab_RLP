@@ -1,0 +1,3 @@
+-Arduino i Raspi estan conectats per dos pins, el profe va mencionar algo de que es conedctan per Usb, si es aixi es siomplement trure aquets dos pins i conectar-ho per usb
+-falten camera micro i altaveu, simplmanet contecarlos a la raspi per usb o jack
+-si tenim dos bateries llavoprs el regulador de voltage que va conectat a la controladora del servos no caldra i simpmanet conxtar la bateria directa alla
