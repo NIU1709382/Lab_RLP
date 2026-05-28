@@ -25,10 +25,10 @@ const int PIN_TRIG3 = 8;
 //mode inicial
 int mode = 0;
 
-testServos();
-testMotors();
-testUltrasons();
-testEncoders();
+void testServos();
+void testMotors();
+void testUltrasons();
+void testEncoders();
 
 
 void mostrarMenu() {
@@ -38,6 +38,8 @@ void mostrarMenu() {
     Serial.println("2 - Tests motors");
     Serial.println("3 - Tests ultrasons");
     Serial.println("4 - Tests encoders");
+    Serial.println("5 - Moviment Celles");
+
     Serial.println("0 - Sortir");
     Serial.println("================");
 }
@@ -91,6 +93,9 @@ void loop(){
 
         case 4:
             testEncoders();
+            break;
+        case 5:
+            movimentCelles();
             break;
 
         case 0:

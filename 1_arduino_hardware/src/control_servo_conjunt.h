@@ -5,4 +5,6 @@ void inicialitzarServos();
 
 void moureServo(int canal, int angle);
 
+void movimentCelles();
+
 #endif

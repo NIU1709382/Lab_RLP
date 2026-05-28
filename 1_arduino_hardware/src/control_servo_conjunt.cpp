@@ -24,3 +24,15 @@ void moureServo(int canal, int angle) {
     pwm.setPWM(canal, 0, pulse);
 
 }
+
+void movimentCelles(){
+    moureServo(0, 10);
+    //moureServo(1, x)
+    delay(1000);
+
+    moureServo(0, 100);
+    //moureServo(1, y)
+    delay(1000);
+
+    //afegir cella esquerra quan estigui
+}
