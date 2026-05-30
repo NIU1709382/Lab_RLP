@@ -111,23 +111,11 @@ void loop(){
 
 
 void testServos(){
-    moureServo(0, 0);
+
+    moureServo(8, 150);
     delay(1000);
 
-    moureServo(0, 90);
-    delay(1000);
 
-    moureServo(0, 180);
-    delay(1000);
-
-    moureServo(1, 0);
-    delay(1000);
-
-    moureServo(1, 90);
-    delay(1000);
-
-    moureServo(1, 180);
-    delay(1000);
 }
 
 void testMotors(){

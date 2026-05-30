@@ -7,7 +7,7 @@
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 
 #define SERVOMIN  150
-#define SERVOMAX  600
+#define SERVOMAX  700
 
 void inicialitzarServos() {
     Wire.begin();
@@ -26,13 +26,16 @@ void moureServo(int canal, int angle) {
 }
 
 void movimentCelles(){
-    moureServo(0, 10);
-    //moureServo(1, x)
+    //dreta
+    moureServo(5, 0);
+    //esquerra
+    moureServo(6, 80);
     delay(1000);
 
-    moureServo(0, 100);
-    //moureServo(1, y)
+    //dreta
+    moureServo(5, 80);
+    //esquerra
+    moureServo(6, 0);
     delay(1000);
 
-    //afegir cella esquerra quan estigui
 }
