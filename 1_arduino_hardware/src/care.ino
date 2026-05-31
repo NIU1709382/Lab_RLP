@@ -75,8 +75,9 @@ void loop(){
 
     // LLEGIR SERIAL
     if (Serial.available()) {
-        char c = Serial.read();
-        mode = c - '0';
+        String entrada = Serial.readStringUntil('\n');
+        entrada.trim();
+        mode = entrada.toInt();
 
         Serial.print("Mode seleccionat: ");
         Serial.println(mode);
