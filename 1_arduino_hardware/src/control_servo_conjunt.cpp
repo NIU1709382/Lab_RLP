@@ -54,3 +54,26 @@ void movimentUlls(){
     delay(1000);
 
 }
+
+void medRec1(){
+    moureServo(4, 32);
+    delay(1000);
+}
+
+void medRec2(){
+    moureServo(5, 45);
+    delay(1000);
+
+}
+
+void medCercle1(){
+    moureServo(4, 85);
+    delay(1000);
+
+}
+
+void medCercle2(){
+    moureServo(5, 100);
+    delay(1000);
+
+}

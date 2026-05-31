@@ -40,6 +40,10 @@ void mostrarMenu() {
     Serial.println("4 - Tests encoders");
     Serial.println("5 - Moviment Celles");
     Serial.println("6 - Moviment Ulls");
+    Serial.println("7 - Medicació rect 1");
+    Serial.println("8 - Medicació cercle 1");
+    Serial.println("9 - Medicació rect 2");
+    Serial.println("10 - Medicació cercle 2");
 
     Serial.println("0 - Sortir");
     Serial.println("================");
@@ -98,9 +102,21 @@ void loop(){
         case 5:
             movimentCelles();
             break;
-
         case 6:
             movimentUlls();
+            break;
+        case 7:
+            medRec1();
+            break;
+
+        case 8:
+            medCercle1();
+            break;
+        case 9:
+            medRec2();
+            break;
+        case 10:
+            medCercle2();
             break;
 
         case 0:

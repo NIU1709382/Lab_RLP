@@ -5,8 +5,14 @@ void inicialitzarServos();
 
 void moureServo(int canal, int angle);
 
+//ulls
 void movimentCelles();
-
 void movimentUlls();
+
+//medicació
+void medRec1();
+void medRec2();
+void medCercle1();
+void medCercle2();
 
 #endif
