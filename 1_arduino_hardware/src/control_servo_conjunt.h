@@ -7,4 +7,6 @@ void moureServo(int canal, int angle);
 
 void movimentCelles();
 
+void movimentUlls();
+
 #endif

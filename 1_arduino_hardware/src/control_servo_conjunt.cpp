@@ -27,15 +27,30 @@ void moureServo(int canal, int angle) {
 
 void movimentCelles(){
     //dreta
-    moureServo(5, 0);
+    moureServo(0, 0);
     //esquerra
-    moureServo(6, 80);
+    moureServo(1, 80);
     delay(1000);
 
     //dreta
-    moureServo(5, 80);
+    moureServo(0, 80);
     //esquerra
-    moureServo(6, 0);
+    moureServo(1, 0);
+    delay(1000);
+
+}
+
+void movimentUlls(){
+    //dreta
+    moureServo(2, 5);
+    //esquerra
+    moureServo(3, 50);
+    delay(1000);
+
+    //dreta
+    moureServo(2, 30);
+    //esquerra
+    moureServo(3, 25);
     delay(1000);
 
 }

@@ -39,6 +39,7 @@ void mostrarMenu() {
     Serial.println("3 - Tests ultrasons");
     Serial.println("4 - Tests encoders");
     Serial.println("5 - Moviment Celles");
+    Serial.println("6 - Moviment Ulls");
 
     Serial.println("0 - Sortir");
     Serial.println("================");
@@ -96,6 +97,10 @@ void loop(){
             break;
         case 5:
             movimentCelles();
+            break;
+
+        case 6:
+            movimentUlls();
             break;
 
         case 0:
