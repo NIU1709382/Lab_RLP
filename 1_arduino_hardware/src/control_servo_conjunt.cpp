@@ -7,7 +7,7 @@
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 
 #define SERVOMIN  150
-#define SERVOMAX  700
+#define SERVOMAX  590
 
 void inicialitzarServos() {
     Wire.begin();
@@ -15,6 +15,7 @@ void inicialitzarServos() {
     pwm.setPWMFreq(50);
 
 }
+
 
 //cada servo té un canal assignat
 void moureServo(int canal, int angle) {
@@ -56,7 +57,9 @@ void movimentUlls(){
 }
 
 void medRec1(){
-    moureServo(4, 32);
+    moureServo(4, 145);
+    delay(1000);
+    moureServo(4, 60);
     delay(1000);
 }
 
@@ -67,7 +70,9 @@ void medRec2(){
 }
 
 void medCercle1(){
-    moureServo(4, 85);
+    moureServo(4, 35);
+    delay(1000);
+    moureServo(4, 120);
     delay(1000);
 
 }
