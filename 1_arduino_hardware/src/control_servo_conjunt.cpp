@@ -64,7 +64,9 @@ void medRec1(){
 }
 
 void medRec2(){
-    moureServo(5, 45);
+    moureServo(5, 135);
+    delay(1000);
+    moureServo(5, 50);
     delay(1000);
 
 }
@@ -78,7 +80,9 @@ void medCercle1(){
 }
 
 void medCercle2(){
-    moureServo(5, 100);
+    moureServo(5, 25);
+    delay(1000);
+    moureServo(5, 110);
     delay(1000);
 
 }
