@@ -3,13 +3,13 @@
 
 #include <Arduino.h>
 
-// inicialitza un encoder
+// Inicialitza l'encoder (id: 0 o 1)
 void inicialitzarEncoder(int encA, int encB, int id);
 
-// lectura
+// Lectura atòmica (segura des del loop principal)
 long getEncoderCount(int id);
 
-// reset
+// Reset atòmic
 void resetEncoder(int id);
 
 #endif

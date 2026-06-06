@@ -45,9 +45,15 @@ void loop() {
 }
 
 void llegirComanda() {
-  if (Serial.available()) {
-    comanda = Serial.readStringUntil('\n');
-    processarComanda(comanda);
+  static String buffer = "";
+  while (Serial.available()) {
+    char c = Serial.read();
+    if (c == '\n') {
+      processarComanda(buffer);
+      buffer = "";
+    } else {
+      buffer += c;
+    }
   }
 }
 
