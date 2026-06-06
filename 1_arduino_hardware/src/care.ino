@@ -25,10 +25,10 @@ const int PIN_TRIG3 = 8;
 //mode inicial
 int mode = 0;
 
-testServos();
-testMotors();
-testUltrasons();
-testEncoders();
+void testServos();
+void testMotors();
+void testUltrasons();
+void testEncoders();
 
 
 void mostrarMenu() {
@@ -38,6 +38,13 @@ void mostrarMenu() {
     Serial.println("2 - Tests motors");
     Serial.println("3 - Tests ultrasons");
     Serial.println("4 - Tests encoders");
+    Serial.println("5 - Moviment Celles");
+    Serial.println("6 - Moviment Ulls");
+    Serial.println("7 - Medicació rect 1");
+    Serial.println("8 - Medicació cercle 1");
+    Serial.println("9 - Medicació rect 2");
+    Serial.println("10 - Medicació cercle 2");
+
     Serial.println("0 - Sortir");
     Serial.println("================");
 }
@@ -68,8 +75,9 @@ void loop(){
 
     // LLEGIR SERIAL
     if (Serial.available()) {
-        char c = Serial.read();
-        mode = c - '0';
+        String entrada = Serial.readStringUntil('\n');
+        entrada.trim();
+        mode = entrada.toInt();
 
         Serial.print("Mode seleccionat: ");
         Serial.println(mode);
@@ -92,6 +100,25 @@ void loop(){
         case 4:
             testEncoders();
             break;
+        case 5:
+            movimentCelles();
+            break;
+        case 6:
+            movimentUlls();
+            break;
+        case 7:
+            medRec1();
+            break;
+
+        case 8:
+            medCercle1();
+            break;
+        case 9:
+            medRec2();
+            break;
+        case 10:
+            medCercle2();
+            break;
 
         case 0:
             pararMotor(RPWM1, LPWM1);
@@ -106,23 +133,11 @@ void loop(){
 
 
 void testServos(){
-    moureServo(0, 0);
+
+    moureServo(8, 150);
     delay(1000);
 
-    moureServo(0, 90);
-    delay(1000);
 
-    moureServo(0, 180);
-    delay(1000);
-
-    moureServo(1, 0);
-    delay(1000);
-
-    moureServo(1, 90);
-    delay(1000);
-
-    moureServo(1, 180);
-    delay(1000);
 }
 
 void testMotors(){
