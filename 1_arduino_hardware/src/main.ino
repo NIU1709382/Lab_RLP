@@ -12,6 +12,7 @@
 #include "control_ultraso.h"
 #include "control_motor.h"
 #include "control_servo_conjunt.h"
+#include "config.h"
 
 // ── Pins ──────────────────────────────────────────────────────────────────────
 
@@ -31,19 +32,6 @@
 #define LPWM1  10
 #define RPWM2  5
 #define LPWM2  6
-
-// ── Configuració ──────────────────────────────────────────────────────────────
-
-#define SERIAL_BAUD         115200   // Més ràpid que 9600 → menys latència
-
-// Heartbeat: si no rebem cap missatge de la RPi en X ms → mode segur
-#define HEARTBEAT_TIMEOUT_MS  500
-
-// Interval d'enviament de telemetria cap a la RPi
-#define TELEMETRIA_INTERVAL_MS  100
-
-// Distància mínima (cm) per aturar motors automàticament
-#define DISTANCIA_SEGURETAT_CM  20.0f
 
 // ── Objectes globals ──────────────────────────────────────────────────────────
 
