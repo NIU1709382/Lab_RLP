@@ -102,12 +102,24 @@ L'aplicació web `3_web_cloud/care` usa `package.json` amb:
 
 ## Components
 
-| Nom        | Unitats | Preu   |
-|------------|---------|--------|
-| Producte 1 | 2       |  €   |
-| Producte 2 | 1       |  €    |
-| Producte 3 | 3       |  €    |
-| **Total**  |         | ** €** |
+| Nom                           | Unitats | Preu        |
+|-------------------------------|---------|-------------|
+| Cámara Fisheye 5MP            |   1     |  29,95€     |
+| Raspberry Pi 5 /4 B           |   1     |  97,95€     |
+| Arduino Uno                   |   1     |  23,95€     |
+| Controlador PWM 16 canales    |   1     |  7,20€      |
+| Servomotor digital MG996R     |   5     |  6,50€      |
+| Micro servo miniatura SG90    |   4     |  2,30 €     |
+| Sensor de ultrasonidos HC-SR04|   3     |  1,80 €     |
+| Motor 20D - 250:1 (12V)       |   2     |  37,95 €    |
+| Controladora motor            |   2     |   €         |
+| Micro USB                     |   1     |   €         |
+| Bateria 14V                   |   1     |   €         |
+| Power bank                    |   1     |   €         |
+| Step down 5V                  |   1     |   €         |
+| Step down 12V                 |   1     |   €         |
+| Altaveu                       |   1     |   €         |
+| **Total**                     |         | ** €**      |
 
 ## Detalls
 
