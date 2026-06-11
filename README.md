@@ -1,22 +1,104 @@
 ![Logo](4_design_models/logo.jpeg)
 # Care-E: Assistent Robòtic Autònom per a la Gestió de Medicació
 
-**Care-E** és un prototip de robot assistencial dissenyat per millorar la qualitat de vida de la gent gran mitjançant la dispensació autònoma de medicaments i l'acompanyament cognitiu.
+**Care-E** és un projecte d'assistència robòtica pensat per millorar la qualitat de vida de la gent gran mitjançant la dispensació de medicació, la detecció de cares i la interacció amb familiars a través d'una plataforma web.
+
+## Índex
+
+- [Descripció](#descripció)
+- [Arquitectura del Repositori](#arquitectura-del-repositori)
+- [Dependències](#dependències)
+- [SetUp i instal·lació](#setup-i-instal·lació)
+- [Components](#components)
+- [Detalls](#detalls)
+  - [Software](#software)
+  - [Hardware](#hardware)
+- [Llibreries i eines utilitzades](#llibreries-i-eines-utilitzades)
+- [Requisits de Maquinari](#requisits-de-maquinari)
+- [Conceptes tècnics](#conceptes-tècnics)
+- [Vídeo de demostració](#vídeo-de-demostració)
+- [Next Steps](#next-steps)
+- [Referències](#referències)
+- [Desenvolupadors](#desenvolupadors)
 
 ## Descripció
 
-### Arquitectura del Repositori
 
-Aquest projecte utilitza una arquitectura de *Monorepo* dividida per dominis tecnològics:
 
-* `/1_arduino_hardware`: Lògica de control de motors de baix nivell, actuadors i lectura de sensors d'ultrasons (C++).
-* `/2_raspberry_brain`: Cervell central. Inclou la visió artificial, la comunicació amb Gemini, la navegació d'alt nivell i la gestió d'estats (Python).
-* `/3_web_cloud`: Interfície d'usuari (Frontend) i lògica de base de dades per al control familiar.
-* `/4_design_models`: Arxius de disseny 3D (.STL) del xassís i el dispensador.
+## Arquitectura del Repositori
 
-### Dependències
+Aquest projecte segueix una estructura de monorepo dividida en quatre parts principals:
+
+* `/1_arduino_hardware`
+  - Codi Arduino en C++ per controlar el xassís, servos, ultrasons i engranatges.
+  - Inclou esbossos d'exemple i un menú serial per provar moviments, tests de motors i dispensació.
+
+* `/2_raspberry_brain`
+  - Pipeline de visió per computador amb Python.
+  - `vision/mainRecCares.py` inicia la càmera i fa la detecció i el reconeixement de cares.
+  - La carpeta `vision/deteccio_cares` conté els mòduls de detecció (`dlib`), reconeixement (`DeepFace`) i filtre de Kalman.
+
+* `/3_web_cloud`
+  - Aplicació web `care` construïda amb Next.js.
+  - Serveis backend que gestionen comandes del robot, TTS, veu i accions de dispensació.
+  - API routes per a `robot-action`, `robot-voice`, `tts` i altres funcionalitats.
+
+* `/4_design_models`
+  - Arxius de disseny 3D i fitxers STL del xassís i del dispensador.
+
+## Dependències
+
+### Python / Conda
+
+El projecte de visió i la resta de lògiques Python es gestionen des de `environment.yml`.
+
+Conté paquets com:
+
+- `opencv-python`
+- `dlib`
+- `deepface`
+- `tensorflow`
+- `flask`
+- `requests`
+- `python-dotenv`
+
+### Node.js
+
+L'aplicació web `3_web_cloud/care` usa `package.json` amb:
+
+- `next` 16
+- `react` 19
+- `react-dom`
+- `@google-cloud/text-to-speech`
+- `@google/genai`
+- `@supabase/supabase-js`
+- `@supabase/ssr`
+- `google-auth-library`
+- `tailwindcss`
 
 ## SetUp i instal·lació
+
+### Entorn Python
+
+1. Crear l'entorn Conda amb `environment.yml`:
+   - `conda env create -f environment.yml`
+2. Activar l'entorn:
+   - `conda activate care`
+3. Comprovar que Python 3.12 està activat.
+
+### Aplicació web
+
+1. Anar a `3_web_cloud/care`.
+2. Instal·lar dependències Node:
+   - `npm install`
+3. Executar en mode desenvolupament:
+   - `npm run dev`
+
+### Arduino
+
+1. Obrir `1_arduino_hardware/src/care.ino` en l'IDE d'Arduino.
+2. Carregar el firmware a una placa Arduino UNO.
+3. Connectar els servos, els motors i els sensors segons el cablejat definit a `src/`.
 
 ## Components
 
@@ -27,6 +109,10 @@ Aquest projecte utilitza una arquitectura de *Monorepo* dividida per dominis tec
 ### Hardware
 
 ## Llibreries i eines utilitzades
+
+- Python: `opencv-python`, `dlib`, `deepface`, `tensorflow`, `flask`, `requests`, `python-dotenv`.
+- Node: `next`, `react`, `@google-cloud/text-to-speech`, `@google/genai`, `@supabase/supabase-js`, `tailwindcss`.
+- Desenvolupament: Arduino IDE, Conda, Git.
 
 ## Requisits de Maquinari
 * **Processament:** Raspberry Pi 5 (Cervell) + Arduino UNO R3 (Controlador de maquinari).
