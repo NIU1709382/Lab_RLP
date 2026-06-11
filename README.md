@@ -1,3 +1,4 @@
+![Logo](4_design_models/logo.jpeg)
 # 🤖 Care-E: Assistent Robòtic Autònom per a la Gestió de Medicació
 
 **Care-E** és un prototip de robot assistencial dissenyat per millorar la qualitat de vida de la gent gran mitjançant la dispensació autònoma de medicaments i l'acompanyament cognitiu.
