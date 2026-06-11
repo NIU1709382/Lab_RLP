@@ -1,8 +1,6 @@
 ![Logo](4_design_models/logo.jpeg)
 # Care-E: Assistent Robòtic Autònom per a la Gestió de Medicació
 
-**Care-E** és un projecte d'assistència robòtica pensat per millorar la qualitat de vida de la gent gran mitjançant la dispensació de medicació, la detecció de cares i la interacció amb familiars a través d'una plataforma web.
-
 ## Índex
 
 - [Descripció](#descripció)
@@ -23,6 +21,9 @@
 
 ## Descripció
 
+Aquest projecte consisteix en el desenvolupament d'un robot assistencial intel·ligent destinat a millorar la qualitat de vida de les persones grans que viuen soles. L'objectiu principal és oferir suport en les activitats quotidianes, augmentar la seguretat de l'usuari i proporcionar una eina de comunicació i acompanyament tant per a la persona com per als seus familiars.
+
+El robot integra tecnologies de visió artificial, intel·ligència artificial, navegació autònoma i interacció per veu per actuar de manera proactiva dins de l'entorn domèstic.
 
 
 ## Arquitectura del Repositori
@@ -48,33 +49,15 @@ Aquest projecte segueix una estructura de monorepo dividida en quatre parts prin
 
 ## Dependències
 
-### Python / Conda
+* ![Fritzing](https://img.shields.io/badge/Fritzing-0075A2?style=for-the-badge&logo=fritzing&logoColor=white)
+* ![Google Cloud](https://img.shields.io/badge/Google_Cloud-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)
+* ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+* ![Arduino](https://img.shields.io/badge/Arduino-00979D?style=for-the-badge&logo=arduino&logoColor=white)
+* ![CoppeliaSim](https://img.shields.io/badge/CoppeliaSim-000000?style=for-the-badge&logo=coppeliasim&logoColor=white)
+* ![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)
+* ![Autodesk Fusion](https://img.shields.io/badge/Autodesk_Fusion-0696D7?style=for-the-badge&logo=autodesk&logoColor=white)
+* ![Blender](https://img.shields.io/badge/Blender-E87D0D?style=for-the-badge&logo=blender&logoColor=white)
 
-El projecte de visió i la resta de lògiques Python es gestionen des de `environment.yml`.
-
-Conté paquets com:
-
-- `opencv-python`
-- `dlib`
-- `deepface`
-- `tensorflow`
-- `flask`
-- `requests`
-- `python-dotenv`
-
-### Node.js
-
-L'aplicació web `3_web_cloud/care` usa `package.json` amb:
-
-- `next` 16
-- `react` 19
-- `react-dom`
-- `@google-cloud/text-to-speech`
-- `@google/genai`
-- `@supabase/supabase-js`
-- `@supabase/ssr`
-- `google-auth-library`
-- `tailwindcss`
 
 ## SetUp i instal·lació
 
@@ -102,6 +85,8 @@ L'aplicació web `3_web_cloud/care` usa `package.json` amb:
 
 ## Components
 
+En aquesta secció mostrem els components principals utilitzats per tal de dur a terme el projecte, així com les unitats utilitzades de cadascun i el seu preu corresponent. 
+
 | Nom                           | Unitats | Preu        |
 |-------------------------------|---------|-------------|
 | Cámara Fisheye 5MP            |   1     |  29,95€     |
@@ -112,14 +97,15 @@ L'aplicació web `3_web_cloud/care` usa `package.json` amb:
 | Micro servo miniatura SG90    |   4     |  2,30 €     |
 | Sensor de ultrasonidos HC-SR04|   3     |  1,80 €     |
 | Motor 20D - 250:1 (12V)       |   2     |  37,95 €    |
-| Controladora motor            |   2     |   €         |
-| Micro USB                     |   1     |   €         |
-| Bateria 14V                   |   1     |   €         |
-| Power bank                    |   1     |   €         |
-| Step down 5V                  |   1     |   €         |
-| Step down 12V                 |   1     |   €         |
-| Altaveu                       |   1     |   €         |
-| **Total**                     |         | ** €**      |
+| Controladora motor            |   2     |  5,95€      |
+| Micro USB                     |   1     |  10€        |
+| Bateria 14V                   |   1     |  20€        |
+| Power bank 5000mAh            |   1     |  12€        |
+| Step down 5V                  |   1     |  6,30€      |
+| Step down 12V                 |   1     |  4,50€      |
+| Altaveu                       |   1     |  4,30€      |
+| Amplificador                  |   1     |  6,50€      |
+| **Total**                     |         |** 357,55€** |
 
 ## Detalls
 
