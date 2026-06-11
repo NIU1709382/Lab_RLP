@@ -49,7 +49,6 @@ Aquest projecte segueix una estructura de monorepo dividida en quatre parts prin
 
 ## Dependències
 
-### Dependencies
 
 * [![Fritzing](https://img.shields.io/badge/Fritzing-0075A2?style=for-the-badge&logo=fritzing&logoColor=white)](https://fritzing.org/)
 * [![Google Cloud](https://img.shields.io/badge/Google_Cloud-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)](https://cloud.google.com/)
@@ -110,11 +109,32 @@ En aquesta secció mostrem els components principals utilitzats per tal de dur a
 | Amplificador                  |   1     |  6,50€      |
 | **Total**                     |         |** 357,55€** |
 
+Els components detallats són per a la producció d'un únic robot.
+
 ## Detalls
+
+En aquest apartat es descriu l'arquitectura de software utilitzada i les especificacions de les connexions de hardware realitzades.
 
 ### Software
 
+En la següent figura es pot observar l'arquitectura del software desenvolupada i com es connecten els diferents mòduls.
+
+![Disseny arquitectura sw](documentation/DiagramaSw.drawio.png)
+
 ### Hardware
+
+En aquesta secció detallem les connexions de hardware amb els esquemes de cadascun dels components principals realitzats amb l'aplicació Fritzing
+
+#### Esquema connexió motors
+
+![Esquema connexió motors](1_arduino_hardware/Esquema Electric/motors_drivers.png)
+
+#### Esquema connexió ultrasons
+![Esquema connexió ultrasons](1_arduino_hardware/Esquema Electric/ultraso.png)
+
+#### Esquema connexió servos
+![Esquema connexió servos](1_arduino_hardware/Esquema Electric/servos.png)
+
 
 ## Llibreries i eines utilitzades
 
