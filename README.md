@@ -178,6 +178,12 @@ La plataforma també incorpora un sistema de notificacions en temps real orienta
 
 ## Next Steps
 
+Per seguir avançant en el projecte presentem diverses línies de treball que permetrien augmentar la robustesa, autonomia i utilitat del sistema en futurs desenvolupaments.
+
+- Sistema SLAM: Una possible millora seria implementar tècniques de SLAM (Simultaneous Localization and Mapping) per generar un mapa de l'habitatge, permetent una navegació més eficient, precisa i adaptada a entorns complexos.
+- Detecció avançada d'emergències: Ampliar el sistema de seguretat incorporant detecció de fum, foc, absència prolongada de moviment o comportaments anòmals mitjançant tècniques de visió artificial i sensors específics.
+- Verificació de presa de medicació: Actualment el robot és capaç de dispensar la medicació en el moment adequat. Com a millora futura, es podria incorporar un sistema de verificació visual que confirmi si la medicació ha estat recollida i ingerida, augmentant la seguretat i el seguiment dels tractaments.
+
 ## Referències
 
 ## Desenvolupadors
