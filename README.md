@@ -186,6 +186,11 @@ Per seguir avançant en el projecte presentem diverses línies de treball que pe
 
 ## Referències
 
+- Arduino. (2024). Arduino Official Documentation. https://docs.arduino.cc
+- Google Cloud. (2024). Vertex AI documentation. https://cloud.google.com/vertex-ai
+- Jocher, G. (2023). YOLOv8 by Ultralytics: Real-time object detection and segmentation. https://github.com/ultralytics/ultralytics
+
+
 ## Desenvolupadors
 - **Martí Bertarns Arasanz** - Universitat Autònoma de Barcelona (UAB)
 - **Marc Cantero Priego** - Universitat Autònoma de Barcelona (UAB)
