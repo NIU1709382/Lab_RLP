@@ -49,14 +49,17 @@ Aquest projecte segueix una estructura de monorepo dividida en quatre parts prin
 
 ## Dependències
 
-* ![Fritzing](https://img.shields.io/badge/Fritzing-0075A2?style=for-the-badge&logo=fritzing&logoColor=white)
-* ![Google Cloud](https://img.shields.io/badge/Google_Cloud-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)
-* ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
-* ![Arduino](https://img.shields.io/badge/Arduino-00979D?style=for-the-badge&logo=arduino&logoColor=white)
-* ![CoppeliaSim](https://img.shields.io/badge/CoppeliaSim-000000?style=for-the-badge&logo=coppeliasim&logoColor=white)
-* ![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)
-* ![Autodesk Fusion](https://img.shields.io/badge/Autodesk_Fusion-0696D7?style=for-the-badge&logo=autodesk&logoColor=white)
-* ![Blender](https://img.shields.io/badge/Blender-E87D0D?style=for-the-badge&logo=blender&logoColor=white)
+### Dependencies
+
+* [![Fritzing](https://img.shields.io/badge/Fritzing-0075A2?style=for-the-badge&logo=fritzing&logoColor=white)](https://fritzing.org/)
+* [![Google Cloud](https://img.shields.io/badge/Google_Cloud-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)](https://cloud.google.com/)
+* [![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+* [![Arduino](https://img.shields.io/badge/Arduino-00979D?style=for-the-badge&logo=arduino&logoColor=white)](https://www.arduino.cc/)
+* [![Raspberry Pi](https://img.shields.io/badge/Raspberry_Pi-A22846?style=for-the-badge&logo=raspberry-pi&logoColor=white)](https://www.raspberrypi.com/)
+* [![CoppeliaSim](https://img.shields.io/badge/CoppeliaSim-000000?style=for-the-badge&logo=coppeliasim&logoColor=white)](https://www.coppeliarobotics.com/)
+* [![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
+* [![Autodesk Fusion](https://img.shields.io/badge/Autodesk_Fusion-0696D7?style=for-the-badge&logo=autodesk&logoColor=white)](https://www.autodesk.com/products/fusion-360/overview)
+
 
 
 ## SetUp i instal·lació
