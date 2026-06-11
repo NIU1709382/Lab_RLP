@@ -127,13 +127,13 @@ En aquesta secció detallem les connexions de hardware amb els esquemes de cadas
 
 #### Esquema connexió motors
 
-![Esquema connexió motors](1_arduino_hardware/Esquema Electric/motors_drivers.png)
+![Esquema connexió motors](1_arduino_hardware/Esquema_Electric/motors_drivers.png)
 
 #### Esquema connexió ultrasons
-![Esquema connexió ultrasons](1_arduino_hardware/Esquema Electric/ultraso.png)
+![Esquema connexió ultrasons](1_arduino_hardware/Esquema_Electric/ultraso.png)
 
 #### Esquema connexió servos
-![Esquema connexió servos](1_arduino_hardware/Esquema Electric/servos.png)
+![Esquema connexió servos](1_arduino_hardware/Esquema_Electric/servos.png)
 
 
 ## Llibreries i eines utilitzades
