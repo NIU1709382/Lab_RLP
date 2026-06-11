@@ -102,6 +102,13 @@ L'aplicació web `3_web_cloud/care` usa `package.json` amb:
 
 ## Components
 
+| Nom        | Unitats | Preu   |
+|------------|---------|--------|
+| Producte 1 | 2       |  €   |
+| Producte 2 | 1       |  €    |
+| Producte 3 | 3       |  €    |
+| **Total**  |         | ** €** |
+
 ## Detalls
 
 ### Software
