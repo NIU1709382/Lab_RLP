@@ -107,7 +107,7 @@ En aquesta secció mostrem els components principals utilitzats per tal de dur a
 | Step down 12V                 |   1     |  4,50€      |
 | Altaveu                       |   1     |  4,30€      |
 | Amplificador                  |   1     |  6,50€      |
-| **Total**                     |         |** 357,55€** |
+| **Total**                     |         |**357,55€** |
 
 Els components detallats són per a la producció d'un únic robot.
 
@@ -140,7 +140,7 @@ En aquesta secció detallem les connexions de hardware amb els esquemes de cadas
 
 - Python: `opencv-python`, `dlib`, `deepface`, `tensorflow`, `flask`, `requests`, `python-dotenv`.
 - Node: `next`, `react`, `@google-cloud/text-to-speech`, `@google/genai`, `@supabase/supabase-js`, `tailwindcss`.
-- Desenvolupament: Arduino IDE, Conda, Git.
+- Desenvolupament: Arduino IDE, Conda, Git, CoppeliaSim, Fusion, Fritzing, Visual Studio Code
 
 ## Requisits de Maquinari
 * **Processament:** Raspberry Pi 5 (Cervell) + Arduino UNO R3 (Controlador de maquinari).
@@ -149,12 +149,30 @@ En aquesta secció detallem les connexions de hardware amb els esquemes de cadas
 * **Energia:** Bateria LiPo 3S 11.1V amb reguladors DC-DC (5.1V / 3A).
 
 ## Conceptes tècnics
-1. **Navegació Autònoma:** Sistema de tracció per erugues amb evasió d'obstacles mitjançant sensors d'ultrasons (HC-SR04) i algoritmes de cerca de l'usuari.
-2. **Visió per Computador:** Reconeixement de persones en temps real utilitzant YOLOv8 i una càmera Fisheye per garantir que la medicació s'entrega a la persona correcta.
-3. **Interacció Cognitiva (IA):** Integració amb Google Gemini i reconeixement de veu per actuar com un assistent empàtic, resolent dubtes sobre salut i horaris.
-4. **Dispensació Segura:** Mecanisme de maquinari dissenyat en 3D amb sistema de *feedback* en llaç tancat per garantir l'entrega correcta de les pastilles.
-5. **Plataforma Cloud:** Dashboard web per a familiars i metges per gestionar els horaris de medicació i rebre alertes en temps real.
 
+### Navegació Autònoma i visió per computador
+
+El robot incorpora un sistema de navegació autònoma dissenyat per operar de manera segura en entorns domèstics. El desplaçament es realitza mitjançant un sistema de tracció per erugues, que proporciona una major estabilitat i capacitat per superar petits obstacles presents habitualment en habitatges, com ara catifes o irregularitats del terra.
+
+Per a l'evasió d'obstacles, el robot utilitza tres sensors d'ultrasons HC-SR04 distribuïts estratègicament a la part frontal (esquerra, centre i dreta). Aquests sensors permeten mesurar contínuament la distància als objectes propers i generar una percepció bàsica de l'entorn. A partir d'aquestes mesures, el sistema pren decisions de navegació en temps real, ajustant la direcció del moviment per evitar col·lisions i garantir un desplaçament segur.
+
+La localització de l'usuari es complementa amb un sistema de visió per computador basat en una càmera Fisheye, que proporciona un ampli camp de visió i permet monitoritzar una àrea més gran de l'entorn sense necessitat de moviments constants de la càmera. Mitjançant el model de detecció d'objectes YOLOv8, el robot és capaç de detectar persones en temps real i determinar la seva posició relativa dins de l'escena.
+
+La combinació de la informació procedent dels sensors d'ultrasons i de la detecció visual permet al robot implementar estratègies de cerca i aproximació a l'usuari. Quan arriba el moment de dispensar la medicació o interactuar amb la persona, el sistema localitza l'usuari i navega de forma autònoma fins a la seva posició evitant obstacles.
+
+### Interacció Cognitiva (IA)
+
+El robot disposa d'un sistema d'interacció cognitiva basat en intel·ligència artificial generativa, dissenyat per oferir una comunicació natural, accessible i adaptada a les necessitats de les persones grans. Aquesta funcionalitat permet que l'usuari pugui interactuar amb el robot mitjançant la veu, de manera similar a com ho faria amb una altra persona.
+
+La comunicació es basa en una arquitectura que combina tecnologies de Speech-to-Text (STT), per convertir la veu de l'usuari en text, i Text-to-Speech (TTS), que permet al robot generar respostes parlades de forma clara i comprensible. Entre aquests dos components s'integra un model d'intel·ligència artificial basat en Google Gemini, encarregat d'interpretar les consultes i generar respostes contextualitzades.
+
+
+### Plataforma Cloud
+plataforma web centralitzada que permet als familiars, cuidadors i professionals sanitaris supervisar i gestionar de manera remota l'estat de l'usuari i el funcionament del sistema. Aquesta plataforma actua com a punt de connexió entre el robot i les persones responsables de l'atenció, facilitant un seguiment continu sense necessitat de trobar-se físicament al domicili.
+
+A través d'un dashboard web intuïtiu, els usuaris autoritzats poden configurar els horaris de medicació, definir les dosis corresponents a cada franja horària i consultar l'historial d'entregues realitzades pel robot. Aquesta informació es sincronitza automàticament amb el sistema embarcat, permetent que el robot sàpiga en tot moment quina medicació ha de dispensar i quan ho ha de fer.
+
+La plataforma també incorpora un sistema de notificacions en temps real orientat a millorar la seguretat de la persona assistida. Això permet una actuació ràpida davant possibles incidències i proporciona una major tranquil·litat a l'entorn familiar.
 
 ## Vídeo de demostració
 
