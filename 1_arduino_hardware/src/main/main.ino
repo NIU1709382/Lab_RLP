@@ -86,10 +86,10 @@ void setup() {
 void loop() {
     llegirComanda();         // 1. Llegir i processar Serial (no bloqueja)
     //verificarHeartbeat();    // 2. Comprovar si la RPi segueix viva
-    actualitzarSensors();    // 3. Tick dels ultrasons asíncrons
-    actualitzarMotors();     // 4. Aplicar ramp i seguretat per obstacle
+    //actualitzarSensors();    // 3. Tick dels ultrasons asíncrons
+    //actualitzarMotors();     // 4. Aplicar ramp i seguretat per obstacle
     actualitzarMedicacio();  // 5. Avançar màquines d'estats dels servos
-    enviarTelemetria();      // 6. Enviar dades cap a la RPi
+    //enviarTelemetria();      // 6. Enviar dades cap a la RPi
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -169,27 +169,47 @@ void processarComanda(const String &cmd) {
     // "CELLES:80:100"
     else if (cmd.startsWith("ULLS:")) {
         int sep = cmd.indexOf(':', 5);
+        
+        // --- DEBUG ---
+        Serial.print("DEBUG -> Comanda crua: ["); Serial.print(cmd); Serial.println("]");
+        Serial.print("DEBUG -> Index separador: "); Serial.println(sep);
+        
         if (sep > 0) {
-            int dret = cmd.substring(5, sep).toInt();
-            int esq  = cmd.substring(sep + 1).toInt();
-            movimentUlls(dret, esq);
-        }
-    }
-    else if (cmd.startsWith("CELLES:")) {
-        int sep = cmd.indexOf(':', 7);
-        if (sep > 0) {
-            int dret = cmd.substring(7, sep).toInt();
-            int esq  = cmd.substring(sep + 1).toInt();
-            movimentCelles(dret, esq);
-        }
-    }
+            String str_dret = cmd.substring(5, sep);
+            String str_esq  = cmd.substring(sep + 1);
+            
+            Serial.print("DEBUG -> Text tallat dret: ["); Serial.print(str_dret); Serial.println("]");
+            Serial.print("DEBUG -> Text tallat esq:  ["); Serial.print(str_esq); Serial.println("]");
+            
+            int dret = str_dret.toInt();
+            int esq  = str_esq.toInt();
+            
+            Serial.print("DEBUG -> Numeros finals: dret="); Serial.print(dret);
+            Serial.print(" | esq="); Serial.println(esq);
+            // -------------
 
+            movimentUlls(dret, esq);
+            Serial.println("OK:ULLS_MOGUTS");
+        } else {
+            Serial.println("ERR: No s'ha trobat el segon ':'");
+        }
+        
+    }
     // ── Expressions ──────────────────────────────────────────────────────────
     else if (cmd.startsWith("EXP:")) {
         String exp = cmd.substring(4);
         if      (exp == "SORPRESA") expressioSorpresa();
         else if (exp == "ENFADAT")  expressioEnfadat();
         else if (exp == "NEUTRAL")  expressioNeutral();
+    }
+    // ── Coll ──────────────────────────────────────────────────────────────────
+    else if (cmd.startsWith("COLL:SUP:")) {
+        int angle = cmd.substring(9).toInt();
+        movimentCollSup(angle);
+    }
+    else if (cmd.startsWith("COLL:GIR:")) {
+        int angle = cmd.substring(9).toInt();
+        movimentCollGir(angle);
     }
 
     // ── Medicació ─────────────────────────────────────────────────────────────
