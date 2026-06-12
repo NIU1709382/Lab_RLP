@@ -117,6 +117,8 @@ En aquesta secció mostrem els components principals utilitzats per tal de dur a
 
 Els components detallats són per a la producció d'un únic robot.
 
+![vídeo impresora](4_design_models/vídeo-impresora-3d.gif)
+
 
 
 ## Detalls
