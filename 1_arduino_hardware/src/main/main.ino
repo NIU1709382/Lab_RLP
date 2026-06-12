@@ -5,7 +5,7 @@
 //    Núvol ← Raspberry Pi ←→ [Serial] ←→ Arduino ← Sensors/Motors
 //
 //  Aquest fitxer orquestra el loop() principal. Mai utilitza delay().
-//  Tota la lògica de temps va amb millis().
+//  Tota la lògica de temps va amb millis() i màquines d'estat asíncrones.
 // ═══════════════════════════════════════════════════════════════════════════════
 
 #include "control_encoders.h"
@@ -51,13 +51,13 @@ struct EstatAnim {
 
 static const EstatAnim ESTATS[] = {
     //  nom                CelD   CelE  UllD  UllE  CollSup CollInf CollGir   ColorID
-    { "BASE/NEUTRAL",      122,   45,   30,   25,   140,     0,    75,      LED_CIAN },
-    { "TRIST",             122,   45,    0,   50,   100,     0,    75,      LED_DARK_BLUE },
-    { "CONTENT",            45,  120,   30,   25,   140,     0,    75,      LED_YELLOW },
-    { "BUSCANT",            45,  120,   15,   37,   120,     0,    -1,      LED_LILA },
-    { "ESCOLTANT",         122,   45,   30,   25,   130,    35,    75,      LED_BLUE },
-    { "PENSANT",            45,  120,   -1,   -1,   140,     0,    75,      LED_CIAN }, // Els ulls seran dinàmics en python
-    { "ESPANTAT",           45,  120,   30,   25,    60,    70,    75,      LED_RED },
+    { "BASE/NEUTRAL",      122,   45,   30,   25,   140,     20,    75,      LED_CIAN },
+    { "TRIST",             122,   45,    0,   50,   100,      0,    75,      LED_DARK_BLUE },
+    { "CONTENT",            45,  120,   30,   25,   140,      0,    75,      LED_YELLOW },
+    { "BUSCANT",            45,  120,   15,   37,   120,      0,    -1,      LED_LILA },
+    { "ESCOLTANT",         122,   45,   30,   25,   130,     35,    75,      LED_BLUE },
+    { "PENSANT",            45,  120,   -1,   -1,   140,      0,    75,      LED_CIAN }, 
+    { "ESPANTAT",           45,  120,   30,   25,    60,     70,    75,      LED_RED },
 };
 static const int NUM_ESTATS = (int)(sizeof(ESTATS) / sizeof(ESTATS[0]));
 
@@ -80,11 +80,13 @@ static const int NUM_ESTATS = (int)(sizeof(ESTATS) / sizeof(ESTATS[0]));
 #define RPWM2  5
 #define LPWM2  6
 
+// ── CALIBRATGE ACTUALITZAT (SERVOS) ───────────────────────────────────────────
+
 // Límits celles
-#define CELLA_DRET_OBRIR   0
-#define CELLA_DRET_TANCAR  80
-#define CELLA_ESQ_OBRIR    80
-#define CELLA_ESQ_TANCAR   0
+#define CELLA_DRET_OBRIR   45
+#define CELLA_DRET_TANCAR  122
+#define CELLA_ESQ_OBRIR    120
+#define CELLA_ESQ_TANCAR   45
 
 // Límits ulls
 #define ULL_DRET_BAIXAR    0
@@ -92,17 +94,31 @@ static const int NUM_ESTATS = (int)(sizeof(ESTATS) / sizeof(ESTATS[0]));
 #define ULL_ESQ_BAIXAR     50
 #define ULL_ESQ_PUJAR      25
 
-// Límits medicació 1
-#define MED1_RECT_DISPENSAR   60
-#define MED1_CERCLE_DISPENSAR 120
-#define MED1_RECT_RECOLLIR    145
-#define MED1_CERCLE_RECOLLIR  35
+// Límits coll
+#define COLL_GIR_ESQUERRA  30
+#define COLL_GIR_DRETA     120
+#define COLL_GIR_CENTRE    75
+#define COLL_SUP_BAIXAR    60
+#define COLL_SUP_PUJAR     140
+#define COLL_INF_BAIXAR    0
+#define COLL_INF_PUJAR     70
 
-// Límits medicació 2
-#define MED2_RECT_DISPENSAR   50
-#define MED2_CERCLE_DISPENSAR 110
-#define MED2_RECT_RECOLLIR    135
-#define MED2_CERCLE_RECOLLIR  25
+// Límits medicació 1 (CH_MED_1)
+#define MED1_RECT_DISPENSAR   43
+#define MED1_CERCLE_DISPENSAR 103
+#define MED1_RECT_RECOLLIR    128
+#define MED1_CERCLE_RECOLLIR  18
+
+// Límits medicació 2 (CH_MED_2)
+#define MED2_RECT_DISPENSAR   48
+#define MED2_CERCLE_DISPENSAR 105
+#define MED2_RECT_RECOLLIR    133
+#define MED2_CERCLE_RECOLLIR  20
+
+// ── Paràmetres físics per moure per distància ─────────────────────────────────
+#define TICKS_PER_VOLTA   340.0f  // [CAL AJUSTAR] Ticks d'encoder per volta completa del motor
+#define DIAMETRE_RODA_CM  10.0f   // [CAL AJUSTAR] Diàmetre de l'eruga/roda en cm
+const float TICKS_PER_CM = TICKS_PER_VOLTA / (PI * DIAMETRE_RODA_CM);
 
 // ── Objectes globals ──────────────────────────────────────────────────────────
 
@@ -120,7 +136,15 @@ unsigned long ultim_telemetria  = 0;   // millis() de l'últim enviament
 bool          mode_segur        = false;
 String        buffer_serial     = "";
 
-int estat_led_actual = LED_OFF; // Variable per rastrejar quin efecte LED fer anar
+// Variables d'animació i llums
+int estat_led_actual = LED_OFF; 
+int estat_anim_actual = 0;             // Índex de l'estat d'ànim actiu
+unsigned long inici_estat_anim = 0;    // Moment en què s'ha canviat d'estat
+
+// Variables estat de moviment per distància
+bool movent_per_distancia = false;
+long target_enc_0 = 0;
+long target_enc_1 = 0;
 
 // ── Prototips ─────────────────────────────────────────────────────────────────
 void llegirComanda();
@@ -131,6 +155,9 @@ void actualitzarMotors();
 void enviarTelemetria();
 void actualitzarLedsAsincron();
 void aplicarEstatFacial(int index_estat);
+void actualitzarAnimacionsDinamiques();
+void iniciarMovimentDistancia(float dist_cm, int velocitat);
+void actualitzarMovimentDistancia();
 
 // ═══════════════════════════════════════════════════════════════════════════════
 //  SETUP
@@ -139,7 +166,7 @@ void aplicarEstatFacial(int index_estat);
 void setup() {
     Serial.begin(SERIAL_BAUD);
 
-    // Motors (increment de ramp = 8: ràpid però suau)
+    // Motors
     motor1 = inicialitzarMotor(RPWM1, LPWM1, 8);
     motor2 = inicialitzarMotor(RPWM2, LPWM2, 8);
 
@@ -152,7 +179,7 @@ void setup() {
     inicialitzarEncoder(ENCODER_A1, ENCODER_B1, 0);
     inicialitzarEncoder(ENCODER_A2, ENCODER_B2, 1);
 
-    // Servos (PCA9685 via I2C)
+    // Servos
     inicialitzarServos();
     
     // Leds
@@ -162,102 +189,117 @@ void setup() {
     FastLED.show();
 
     // Iniciar a NEUTRAL
-    aplicarEstatFacial(0); // Index 0 es BASE/NEUTRAL
+    aplicarEstatFacial(0); 
 
-    // Esperem que la RPi estigui llesta
     ultim_heartbeat = millis();
-
     Serial.println("READY");
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
 //  LOOP PRINCIPAL
-//  Ordre important: primers la seguretat, després el moviment, després la comms.
 // ═══════════════════════════════════════════════════════════════════════════════
 
 void loop() {
-    llegirComanda();         // 1. Llegir i processar Serial (no bloqueja)
-    verificarHeartbeat();    // 2. Comprovar si la RPi segueix viva
-    actualitzarSensors();    // 3. Tick dels ultrasons asíncrons
-    actualitzarMotors();     // 4. Aplicar ramp i seguretat per obstacle
-    actualitzarMedicacio();  // 5. Avançar màquines d'estats dels servos
-    actualitzarLedsAsincron(); // 6. Actualitzar LEDs (animacions)
-    enviarTelemetria();      // 7. Enviar dades cap a la RPi
+    llegirComanda();               // 1. Llegir i processar Serial (no bloqueja)
+    //verificarHeartbeat();        // 2. Comprovar si la RPi segueix viva (descomentar per prod)
+    //actualitzarSensors();        // 3. Tick dels ultrasons asíncrons
+    actualitzarMovimentDistancia();// 4. Comprova si hem arribat a la distància
+    actualitzarMotors();           // 5. Aplicar ramp i seguretat per obstacle
+    actualitzarMedicacio();        // 6. Avançar màquines d'estats dels servos (si n'hi ha actius)
+    actualitzarAnimacionsDinamiques(); // 7. Moviments orgànics dels estats (ulls/coll)
+    actualitzarLedsAsincron();     // 8. Actualitzar LEDs (animacions)
+    enviarTelemetria();            // 9. Enviar dades cap a la RPi
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-//  1. LLEGIR COMANDA
-//  Protocol: una línia de text per comanda, acabada en '\n'.
-//  Exemples: "ENDAVANT", "ULLS:90:45", "HEARTBEAT"
+//  1. LLEGIR I PROCESSAR COMANDES
 // ═══════════════════════════════════════════════════════════════════════════════
 
 void llegirComanda() {
+    static unsigned long ultim_caracter_rebut = 0;
+    
     while (Serial.available()) {
         char c = Serial.read();
-        if (c == '\n') {
+        ultim_caracter_rebut = millis();
+        
+        if (c == '\n' || c == '\r') {
             buffer_serial.trim();
             if (buffer_serial.length() > 0) {
                 processarComanda(buffer_serial);
+                buffer_serial = "";
             }
-            buffer_serial = "";
-        } else if (buffer_serial.length() < 64) {
-            // Limitem la longitud del buffer per evitar overflow de memòria
+        } 
+        else if (buffer_serial.length() < 64) {
             buffer_serial += c;
         }
     }
+    
+    if (buffer_serial.length() > 0 && (millis() - ultim_caracter_rebut > 50)) {
+        buffer_serial.trim();
+        processarComanda(buffer_serial);
+        buffer_serial = "";
+    }
 }
 
-// ── Parser de comandes ────────────────────────────────────────────────────────
-//
-//  Comandes simples:    "ENDAVANT", "ENRERE", "PARAR", "HEARTBEAT"
-//  Comandes amb args:   "ULLS:90:45", "CELLES:80:100", "VEL:150", "TRACK:..."
-//  Medicació:           "REC_MED1", "REC_MED2", "CERCLE_MED1", "CERCLE_MED2"
-//  Expressions:         "EXP:SORPRESA", "EXP:ENFADAT", "EXP:NEUTRAL", "ANIM:TRIST", etc.
-
 void processarComanda(const String &cmd) {
-    // Qualsevol comanda vàlida és un heartbeat implícit
     ultim_heartbeat = millis();
 
-    // ── Moviment ─────────────────────────────────────────────────────────────
-    if (cmd == "ENDAVANT") {
+    if (cmd.startsWith("ENDAVANT") || cmd.startsWith("ENRERE") || cmd == "PARAR" || cmd.startsWith("GIRARD") || cmd.startsWith("GIRARE") || cmd.startsWith("TRACK:")) {
+        movent_per_distancia = false; 
+    }
+
+    if (cmd.startsWith("ENDAVANT")) {
+        int vel = VEL_MOTORS_DEFAULT;
+        int sep = cmd.indexOf(':');
+        if (sep > 0) vel = cmd.substring(sep + 1).toInt();
+        
+        vel = constrain(vel, 0, 255);
         if (!mode_segur) {
-            motorEndavant(motor1, 150);
-            motorEndavant(motor2, 150);
+            motorEnrere(motor1, vel);
+            motorEndavant(motor2, vel);
         }
     }
-    else if (cmd == "ENRERE") {
-        motorEnrere(motor1, 150);
-        motorEnrere(motor2, 150);
+    else if (cmd.startsWith("ENRERE")) {
+        int vel = VEL_MOTORS_DEFAULT;
+        int sep = cmd.indexOf(':');
+        if (sep > 0) vel = cmd.substring(sep + 1).toInt();
+        
+        vel = constrain(vel, 0, 255);
+        motorEndavant(motor1, vel);
+        motorEnrere(motor2, vel);
     }
     else if (cmd == "PARAR") {
         pararMotor(motor1);
         pararMotor(motor2);
     }
-    else if (cmd.startsWith("VEL:")) {
-        // "VEL:150" → velocitat personalitzada
-        int vel = cmd.substring(4).toInt();
+    else if (cmd.startsWith("GIRARD")) {
+        int vel = VEL_MOTORS_DEFAULT;
+        int sep = cmd.indexOf(':');
+        if (sep > 0) vel = cmd.substring(sep + 1).toInt();
+        
+        vel = constrain(vel, 0, 255);
+        motorEnrere(motor1, vel);
+        motorEnrere(motor2, vel);
+    }
+    else if (cmd.startsWith("GIRARE")) {
+        int vel = VEL_MOTORS_DEFAULT;
+        int sep = cmd.indexOf(':');
+        if (sep > 0) vel = cmd.substring(sep + 1).toInt();
+        
         vel = constrain(vel, 0, 255);
         motorEndavant(motor1, vel);
         motorEndavant(motor2, vel);
     }
-    else if (cmd.startsWith("GIRA:")) {
-        // "GIRA:DRET:120" o "GIRA:ESQU:120"
-        int sep = cmd.indexOf(':', 5);
+    else if (cmd.startsWith("MOVE_DIST:")) {
+        int sep = cmd.indexOf(':', 10);
         if (sep > 0) {
-            String dir = cmd.substring(5, sep);
-            int vel    = cmd.substring(sep + 1).toInt();
-            vel = constrain(vel, 0, 255);
-            if (dir == "DRET") {
-                motorEndavant(motor1, vel);
-                motorEnrere(motor2, vel);
-            } else if (dir == "ESQU") {
-                motorEnrere(motor1, vel);
-                motorEndavant(motor2, vel);
-            }
+            float dist_cm = cmd.substring(10, sep).toFloat();
+            int vel = cmd.substring(sep + 1).toInt();
+            iniciarMovimentDistancia(dist_cm, vel);
+            Serial.println("OK:MOVE_DIST_STARTED");
         }
     }
     else if (cmd.startsWith("TRACK:")) {
-        // Seguiment continu RPi: "TRACK:AngleCollGir:AngleCollSup:VelMotor1:VelMotor2"
         int sep1 = cmd.indexOf(':', 6);
         int sep2 = cmd.indexOf(':', sep1 + 1);
         int sep3 = cmd.indexOf(':', sep2 + 1);
@@ -280,8 +322,6 @@ void processarComanda(const String &cmd) {
             }
         }
     }
-
-    // ── Servos facials (Ordres directes) ───────────────────────────────────────
     else if (cmd.startsWith("ULLS:")) {
         int sep = cmd.indexOf(':', 5);
         if (sep > 0) {
@@ -294,29 +334,37 @@ void processarComanda(const String &cmd) {
         }
     }
     
-    // ── Expressions i Estats ──────────────────────────────────────────────────
+    // ── Expressions i Estats Unificats ───────────────────────────────────────
     else if (cmd.startsWith("EXP:")) {
         String exp = cmd.substring(4);
-        if      (exp == "SORPRESA") expressioSorpresa(); // Assumint q estan a control_servo_conjunt.h
-        else if (exp == "ENFADAT")  expressioEnfadat();
-        else if (exp == "NEUTRAL")  expressioNeutral();
-    }
-    else if (cmd.startsWith("ANIM:")) {
-        String anim = cmd.substring(5);
+        bool trobat = false;
+
+        // 1. Cercar als estats dinàmics
         for(int i = 0; i < NUM_ESTATS; i++){
-            // Converteix "BASE/NEUTRAL" a "BASE_NEUTRAL" per compatibilitat o simplement busca
             String estat_nom = String(ESTATS[i].nom);
-            estat_nom.replace("/", "_");
+            estat_nom.replace("/", "_"); 
             
-            if(anim == estat_nom || anim == String(ESTATS[i].nom)) {
+            if(exp == estat_nom || exp == String(ESTATS[i].nom)) {
                 aplicarEstatFacial(i);
-                Serial.print("OK:ANIM_SET:"); Serial.println(anim);
+                Serial.print("OK:EXP_SET:"); Serial.println(exp);
+                trobat = true;
                 break;
+            }
+        }
+
+        // 2. Fallback per funcions manuals antigues
+        if (!trobat) {
+            if      (exp == "SORPRESA") { expressioSorpresa(); Serial.println("OK:EXP_SET:SORPRESA"); }
+            else if (exp == "ENFADAT")  { expressioEnfadat();  Serial.println("OK:EXP_SET:ENFADAT"); }
+            else if (exp == "NEUTRAL")  { aplicarEstatFacial(0); Serial.println("OK:EXP_SET:NEUTRAL"); }
+            else {
+                Serial.print("ERR:EXP_UNKNOWN:"); 
+                Serial.println(exp);
             }
         }
     }
     
-    // ── Leds directes ─────────────────────────────────────────────────────────
+    // ── Leds i Coll Directe ─────────────────────────────────────────────────
     else if (cmd.startsWith("LED:")) {
          String accio = cmd.substring(4);
          if (accio == "OFF") estat_led_actual = LED_OFF;
@@ -326,8 +374,6 @@ void processarComanda(const String &cmd) {
          else if (accio == "CIAN") estat_led_actual = LED_CIAN;
          else if (accio == "GROC") estat_led_actual = LED_YELLOW;
     }
-
-    // ── Coll (Ordres directes) ────────────────────────────────────────────────
     else if (cmd.startsWith("COLL:SUP:")) {
         int angle = cmd.substring(9).toInt();
         movimentCollSup(angle);
@@ -336,41 +382,117 @@ void processarComanda(const String &cmd) {
         int angle = cmd.substring(9).toInt();
         movimentCollGir(angle);
     }
+    else if (cmd.startsWith("COLL:INF:")) {
+        int angle = cmd.substring(9).toInt();
+        moureServo(CH_COLL_INF, angle);
+    }
 
-    // ── Medicació ─────────────────────────────────────────────────────────────
-    else if (cmd == "REC_MED1")    iniciarMedRec1();
-    else if (cmd == "REC_MED2")    iniciarMedRec2();
-    else if (cmd == "CERCLE_MED1") iniciarMedCercle1();
-    else if (cmd == "CERCLE_MED2") iniciarMedCercle2();
+    // ── Dispenses de Medicació Explícites ───────────────────────────────────
+    else if (cmd == "DISP_RECT1")  moureServo(CH_MED_1, MED1_RECT_DISPENSAR);
+    else if (cmd == "REC_RECT1")   moureServo(CH_MED_1, MED1_RECT_RECOLLIR);
+    else if (cmd == "DISP_CERC1")  moureServo(CH_MED_1, MED1_CERCLE_DISPENSAR);
+    else if (cmd == "REC_CERC1")   moureServo(CH_MED_1, MED1_CERCLE_RECOLLIR);
 
-    // ── Heartbeat explícit ────────────────────────────────────────────────────
+    else if (cmd == "DISP_RECT2")  moureServo(CH_MED_2, MED2_RECT_DISPENSAR);
+    else if (cmd == "REC_RECT2")   moureServo(CH_MED_2, MED2_RECT_RECOLLIR);
+    else if (cmd == "DISP_CERC2")  moureServo(CH_MED_2, MED2_CERCLE_DISPENSAR);
+    else if (cmd == "REC_CERC2")   moureServo(CH_MED_2, MED2_CERCLE_RECOLLIR);
+
+
+    else if (cmd == "DISP4") {
+        moureServo(CH_MED_2, MED2_CERCLE_RECOLLIR);
+        moureServo(CH_MED_2, MED2_CERCLE_DISPENSAR);
+    }
+    
+    // Fallback per les màquines d'estats antigues (si n'hi havia d'actuants)
+    else if (cmd == "AUTO_REC1")   iniciarMedRec1();
+    else if (cmd == "AUTO_REC2")   iniciarMedRec2();
+    // ────────────────────────────────────────────────────────────────────────
+    
     else if (cmd == "HEARTBEAT") {
         Serial.println("HB:OK");
     }
-
-    // ── Reset encoders ────────────────────────────────────────────────────────
     else if (cmd == "RESET_ENC") {
         resetEncoder(0);
         resetEncoder(1);
         Serial.println("ENC:RESET");
     }
-
-    // ── Comanda desconeguda ───────────────────────────────────────────────────
     else {
         Serial.print("ERR:CMD_UNKNOWN:");
         Serial.println(cmd);
     }
-} 
+}
 
-// ── Funció d'ajut per Estats ──────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════════
+//  MOVIMENT PER DISTÀNCIA
+// ═══════════════════════════════════════════════════════════════════════════════
+
+void iniciarMovimentDistancia(float dist_cm, int velocitat) {
+    if (mode_segur) return;
+    
+    long ticks_a_moure = dist_cm * TICKS_PER_CM;
+    long actual_0 = getEncoderCount(0);
+    long actual_1 = getEncoderCount(1);
+    
+    target_enc_0 = actual_0 + ticks_a_moure;
+    target_enc_1 = actual_1 + ticks_a_moure; 
+    
+    movent_per_distancia = true;
+    velocitat = abs(velocitat); 
+    velocitat = constrain(velocitat, 0, 255);
+    
+    if (dist_cm > 0) {
+        motorEndavant(motor1, velocitat);
+        motorEndavant(motor2, velocitat);
+    } else {
+        motorEnrere(motor1, velocitat);
+        motorEnrere(motor2, velocitat);
+    }
+}
+
+void actualitzarMovimentDistancia() {
+    if (!movent_per_distancia) return;
+    
+    if (mode_segur) {
+        movent_per_distancia = false;
+        return;
+    }
+    
+    long actual_0 = getEncoderCount(0);
+    long actual_1 = getEncoderCount(1);
+    
+    bool m0_fi = false;
+    bool m1_fi = false;
+    
+    if (motor1.endavant && actual_0 >= target_enc_0) m0_fi = true;
+    if (!motor1.endavant && actual_0 <= target_enc_0) m0_fi = true;
+    
+    if (motor2.endavant && actual_1 >= target_enc_1) m1_fi = true;
+    if (!motor2.endavant && actual_1 <= target_enc_1) m1_fi = true;
+    
+    if (m0_fi) pararMotor(motor1);
+    if (m1_fi) pararMotor(motor2);
+    
+    if (m0_fi && m1_fi) {
+        movent_per_distancia = false;
+        Serial.println("MOVE_DIST:OK");
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  MÀQUINES D'ESTATS D'ANIMACIÓ I LEDS (SENSE DELAY)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// Estableix les posicions base i inicialitza els temporitzadors
 void aplicarEstatFacial(int index_estat) {
     if(index_estat < 0 || index_estat >= NUM_ESTATS) return;
     
-    const EstatAnim &e = ESTATS[index_estat];
+    estat_anim_actual = index_estat;
+    inici_estat_anim = millis();
     
+    const EstatAnim &e = ESTATS[index_estat];
     estat_led_actual = e.color_id;
 
-    // Els DINAMIC (-1) seran ignorats aquí, RPi ho controlarà via ULLS:/COLL:
     if (e.ull_d >= 0) moureServo(CH_ULL_DRET, e.ull_d);
     if (e.ull_e >= 0) moureServo(CH_ULL_ESQ,  e.ull_e);
     
@@ -382,45 +504,128 @@ void aplicarEstatFacial(int index_estat) {
     moureServo(CH_COLL_INF,   e.coll_inf);
 }
 
+// Actualitza els moviments de coll i ulls dinàmics a cada volta del loop()
+void actualitzarAnimacionsDinamiques() {
+    if (estat_anim_actual < 0 || estat_anim_actual >= NUM_ESTATS) return;
+    
+    const EstatAnim &e = ESTATS[estat_anim_actual];
+    unsigned long temps_estat = millis() - inici_estat_anim;
+
+    if (strcmp(e.nom, "PENSANT") == 0) {
+        // Mou els ulls de dalt a baix de manera asíncrona cada 300ms
+        int cicle = temps_estat / 300;
+        bool fase_alta = (cicle % 2 == 0);
+        moureServo(CH_ULL_DRET, fase_alta ? ULL_DRET_PUJAR : ULL_DRET_BAIXAR);
+        moureServo(CH_ULL_ESQ,  fase_alta ? ULL_ESQ_PUJAR : ULL_ESQ_BAIXAR);
+    }
+    else if (strcmp(e.nom, "BUSCANT") == 0) {
+        // El coll rota a les 3 posicions cada mig segon
+        int cicle = (temps_estat / 500) % 4;
+        if (cicle == 0) moureServo(CH_COLL_GIR, COLL_GIR_ESQUERRA);
+        if (cicle == 1) moureServo(CH_COLL_GIR, COLL_GIR_CENTRE);
+        if (cicle == 2) moureServo(CH_COLL_GIR, COLL_GIR_DRETA);
+        if (cicle == 3) moureServo(CH_COLL_GIR, COLL_GIR_CENTRE);
+    }
+    else if (strcmp(e.nom, "TRIST") == 0) {
+        // Simulació de respiració o sospir lent (Baixa el cap i el puja lentament cada cert temps)
+        int cicle = (temps_estat / 1000) % 3;
+        if (cicle == 0) moureServo(CH_COLL_SUP, e.coll_sup - 15);
+        else moureServo(CH_COLL_SUP, e.coll_sup);
+    }
+    else if (strcmp(e.nom, "CONTENT") == 0) {
+        // Petits bots d'emoció amb el cap
+        int cicle = temps_estat % 2000; // Repeteix cada 2 segons
+        if (cicle < 150) moureServo(CH_COLL_SUP, e.coll_sup - 20);
+        else if (cicle < 300) moureServo(CH_COLL_SUP, e.coll_sup + 10);
+        else moureServo(CH_COLL_SUP, e.coll_sup);
+    }
+}
+
+// Controla tots els parpellejos i ones de color (Inclou el "rotating pixel" de PENSANT)
+void actualitzarLedsAsincron() {
+    static unsigned long ultim_actualitzacio = 0;
+    static uint8_t index_animacio = 0;
+    unsigned long ara = millis();
+
+    if (ara - ultim_actualitzacio < 30) return;
+    ultim_actualitzacio = ara;
+    index_animacio++;
+
+    switch (estat_led_actual) {
+        case LED_OFF:       
+            fill_solid(leds, NUM_LEDS, CRGB::Black); 
+            break;
+            
+        case LED_CIAN:
+            // Si l'estat és PENSANT, afegim l'efecte de "càrrega" / rotació
+            if (estat_anim_actual >= 0 && strcmp(ESTATS[estat_anim_actual].nom, "PENSANT") == 0) {
+                fill_solid(leds, NUM_LEDS, CRGB(0, 50, 50)); 
+                int pos = (ara / 50) % NUM_LEDS; 
+                leds[pos] = CRGB::Cyan;
+            } else {
+                fill_solid(leds, NUM_LEDS, CRGB(0, 255, 255));
+            }
+            break;
+            
+        case LED_DARK_BLUE: 
+            fill_solid(leds, NUM_LEDS, CRGB(0, 0, 100)); 
+            break;
+            
+        case LED_YELLOW:    
+            fill_solid(leds, NUM_LEDS, CRGB(255, 200, 0)); 
+            break;
+            
+        case LED_BLUE:      
+            fill_solid(leds, NUM_LEDS, CRGB::Blue); 
+            break;
+            
+        case LED_GREEN:     
+            fill_solid(leds, NUM_LEDS, CRGB::Green); 
+            break;
+            
+        case LED_LILA: {
+            uint8_t bri = beatsin8(40, 20, 150); 
+            fill_solid(leds, NUM_LEDS, CHSV(190, 255, bri)); 
+            break;
+        }
+        
+        case LED_RED: {
+            if (index_animacio % 8 < 4) fill_solid(leds, NUM_LEDS, CRGB::Red);
+            else                        fill_solid(leds, NUM_LEDS, CRGB::Black);
+            break;
+        }
+    }
+    FastLED.show();
+}
+
 // ═══════════════════════════════════════════════════════════════════════════════
-//  2. VERIFICAR HEARTBEAT
-//  Si la Raspberry no envia res en HEARTBEAT_TIMEOUT_MS ms → mode segur.
-//  En mode segur: motors aturats. Servos i sensors continuen funcionant.
+//  GESTIÓ DE SEGURETAT I TELEMETRIA
 // ═══════════════════════════════════════════════════════════════════════════════
 
 void verificarHeartbeat() {
     bool timeout = (millis() - ultim_heartbeat) > HEARTBEAT_TIMEOUT_MS;
 
     if (timeout && !mode_segur) {
-        // Entrem en mode segur
         mode_segur = true;
+        movent_per_distancia = false;
         pararMotorEmergencia(motor1);
         pararMotorEmergencia(motor2);
-        estat_led_actual = LED_RED; // Alarma visual
+        estat_led_actual = LED_RED; 
         Serial.println("ERR:HEARTBEAT_TIMEOUT");
     }
     else if (!timeout && mode_segur) {
-        // La RPi ha tornat → sortim del mode segur
         mode_segur = false;
-        estat_led_actual = LED_CIAN; // Torna a normal
+        estat_led_actual = LED_CIAN; 
         Serial.println("INFO:HEARTBEAT_RESTORED");
     }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-//  3. ACTUALITZAR SENSORS
-//  Crida el tick asíncron de cada ultraso.
-//  Si es detecta obstacle → atura els motors immediatament.
-// ═══════════════════════════════════════════════════════════════════════════════
-
 void actualitzarSensors() {
-    // Escombrat seqüencial ràpid asíncron per evitar crosstalk real (adaptació per a loop continu)
     static int sensor_index = 0;
     static unsigned long ultim_canvi_sensor = 0;
     
     unsigned long ara = millis();
     
-    // Donem 20ms a cada sensor asíncronament
     if(ara - ultim_canvi_sensor > 20) {
         sensor_index = (sensor_index + 1) % 3;
         ultim_canvi_sensor = ara;
@@ -430,134 +635,42 @@ void actualitzarSensors() {
     if(sensor_index == 1) actualitzarUltraso(ultraso2);
     if(sensor_index == 2) actualitzarUltraso(ultraso3);
 
-    // Reflex local de seguretat: independent de la RPi
-    // Si qualsevol sensor frontal detecta obstacle prop → atura i avisa
     bool obstacle = deteccioObjecte(ultraso1, DISTANCIA_SEGURETAT_CM)
                  || deteccioObjecte(ultraso2, DISTANCIA_SEGURETAT_CM)
                  || deteccioObjecte(ultraso3, DISTANCIA_SEGURETAT_CM);
 
-    if (obstacle && !motorAturat(motor1)) {
-        // Aturem els motors però NO posem mode_segur
-        // (la RPi pot ordenar enrere per esquivar)
+    if (obstacle && (!motorAturat(motor1) || !motorAturat(motor2)) && motor1.endavant) {
         pararMotor(motor1);
         pararMotor(motor2);
+        movent_per_distancia = false;
         Serial.println("WARN:OBSTACLE");
     }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-//  4. ACTUALITZAR MOTORS
-//  Aplica el ramp suau cap a vel_objectiu a cada iteració.
-//  En mode segur: els motors ja estan aturats i es rebutgen noves ordres.
-// ═══════════════════════════════════════════════════════════════════════════════
-
 void actualitzarMotors() {
     if (mode_segur) {
-        // Assegurem que estiguin aturats (pot ser que hagin rebut una ordre
-        // just abans que saltés el timeout)
         pararMotorEmergencia(motor1);
         pararMotorEmergencia(motor2);
         return;
     }
-
     actualitzarMotor(motor1);
     actualitzarMotor(motor2);
 }
-
-// ═══════════════════════════════════════════════════════════════════════════════
-//  6. ACTUALITZAR LEDS (Animacions asíncrones)
-// ═══════════════════════════════════════════════════════════════════════════════
-
-void actualitzarLedsAsincron() {
-    static unsigned long ultim_actualitzacio = 0;
-    static uint8_t index_animacio = 0;
-    unsigned long ara = millis();
-
-    // Només actualitzem cada 30ms (uns 30 frames per segon)
-    if (ara - ultim_actualitzacio < 30) return;
-    ultim_actualitzacio = ara;
-    index_animacio++;
-
-    switch (estat_led_actual) {
-        case LED_OFF:
-            fill_solid(leds, NUM_LEDS, CRGB::Black);
-            break;
-            
-        case LED_CIAN:
-            fill_solid(leds, NUM_LEDS, CRGB(0, 255, 255));
-            break;
-            
-        case LED_DARK_BLUE:
-            fill_solid(leds, NUM_LEDS, CRGB(0, 0, 100)); // Blau fosc, trist
-            break;
-            
-        case LED_YELLOW:
-            fill_solid(leds, NUM_LEDS, CRGB(255, 200, 0)); // Content
-            break;
-            
-        case LED_LILA: // Efecte BUSCANT (Polsació)
-        {
-            // Utilitza onades sinusoïdals basades en el temps per fer polsació natural
-            uint8_t bri = beatsin8(40, 20, 150); // Batega 40 cops/minut entre brillor 20 i 150
-            fill_solid(leds, NUM_LEDS, CHSV(190, 255, bri)); // 190 és lila/morat a l'escala HSV
-            break;
-        }
-            
-        case LED_BLUE:
-            fill_solid(leds, NUM_LEDS, CRGB::Blue);
-            break;
-            
-        case LED_RED: // Efecte ESPANTAT (Parpelleig ràpid)
-        {
-            if (index_animacio % 8 < 4) {
-                fill_solid(leds, NUM_LEDS, CRGB::Red);
-            } else {
-                fill_solid(leds, NUM_LEDS, CRGB::Black);
-            }
-            break;
-        }
-        case LED_GREEN:
-             fill_solid(leds, NUM_LEDS, CRGB::Green);
-             break;
-    }
-    
-    FastLED.show();
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-//  7. ENVIAR TELEMETRIA
-//  Format: clau:valor, una línia per paquet.
-//  Freqüència: cada TELEMETRIA_INTERVAL_MS ms.
-//
-//  Missatges:
-//    DIST1:12.50   → distància sensor 1 en cm (-1 si timeout)
-//    DIST2:34.20
-//    DIST3:8.70
-//    ENC0:1234     → ticks encoder motor 1
-//    ENC1:-567     → ticks encoder motor 2
-//    MODE:SEGUR    → si estem en mode segur
-//    MODE:OK       → si estem en mode normal
-//    MED:OK        → quan una seqüència de medicació acaba
-// ═══════════════════════════════════════════════════════════════════════════════
 
 void enviarTelemetria() {
     unsigned long ara = millis();
     if (ara - ultim_telemetria < TELEMETRIA_INTERVAL_MS) return;
     ultim_telemetria = ara;
 
-    // ── Distàncies ────────────────────────────────────────────────────────────
     Serial.print("DIST1:"); Serial.println(getDistancia(ultraso1), 2);
     Serial.print("DIST2:"); Serial.println(getDistancia(ultraso2), 2);
     Serial.print("DIST3:"); Serial.println(getDistancia(ultraso3), 2);
 
-    // ── Encoders ──────────────────────────────────────────────────────────────
     Serial.print("ENC0:"); Serial.println(getEncoderCount(0));
     Serial.print("ENC1:"); Serial.println(getEncoderCount(1));
 
-    // ── Mode del sistema ──────────────────────────────────────────────────────
     Serial.println(mode_segur ? "MODE:SEGUR" : "MODE:OK");
 
-    // ── Notificació de fi de medicació ────────────────────────────────────────
     static bool medicacio_activa_anterior = false;
     bool med_activa = medicacioEnCurs();
     if (medicacio_activa_anterior && !med_activa) {

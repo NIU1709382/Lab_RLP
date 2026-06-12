@@ -1,40 +1,31 @@
 #include "control_encoders.h"
 
-volatile long encoderCount[2] = {0, 0};
-int encoderA_pin[2];
-int encoderB_pin[2];
+static volatile long _comptes[2] = {0, 0};
+static int _pins_b[2] = {0, 0};
 
-void ISR_encoder0() {
-    if (digitalRead(encoderB_pin[0])) encoderCount[0]++;
-    else                               encoderCount[0]--;
+static void isr0() { _comptes[0] += (digitalRead(_pins_b[0]) == HIGH) ? 1 : -1; }
+static void isr1() { _comptes[1] += (digitalRead(_pins_b[1]) == HIGH) ? 1 : -1; }
+
+void inicialitzarEncoder(int pin_a, int pin_b, int index) {
+    if (index < 0 || index > 1) return;
+    _pins_b[index] = pin_b;
+    pinMode(pin_a, INPUT_PULLUP);
+    pinMode(pin_b, INPUT_PULLUP);
+    if (index == 0) attachInterrupt(digitalPinToInterrupt(pin_a), isr0, RISING);
+    else            attachInterrupt(digitalPinToInterrupt(pin_a), isr1, RISING);
 }
 
-void ISR_encoder1() {
-    if (digitalRead(encoderB_pin[1])) encoderCount[1]++;
-    else                               encoderCount[1]--;
-}
-
-void inicialitzarEncoder(int encA, int encB, int id) {
-    encoderA_pin[id] = encA;
-    encoderB_pin[id] = encB;
-
-    pinMode(encA, INPUT_PULLUP);
-    pinMode(encB, INPUT_PULLUP);
-
-    if (id == 0) attachInterrupt(digitalPinToInterrupt(encA), ISR_encoder0, RISING);
-    else         attachInterrupt(digitalPinToInterrupt(encA), ISR_encoder1, RISING);
-}
-
-long getEncoderCount(int id) {
-    long c;
+void resetEncoder(int index) {
+    if (index < 0 || index > 1) return;
     noInterrupts();
-    c = encoderCount[id];
+    _comptes[index] = 0;
     interrupts();
-    return c;
 }
 
-void resetEncoder(int id) {
+long getEncoderCount(int index) {
+    if (index < 0 || index > 1) return 0;
     noInterrupts();
-    encoderCount[id] = 0;
+    long v = _comptes[index];
     interrupts();
+    return v;
 }
