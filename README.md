@@ -176,7 +176,7 @@ La comunicació es basa en una arquitectura que combina tecnologies de Speech-to
 
 
 ### Plataforma Cloud
-plataforma web centralitzada que permet als familiars, cuidadors i professionals sanitaris supervisar i gestionar de manera remota l'estat de l'usuari i el funcionament del sistema. Aquesta plataforma actua com a punt de connexió entre el robot i les persones responsables de l'atenció, facilitant un seguiment continu sense necessitat de trobar-se físicament al domicili.
+Plataforma web centralitzada que permet als familiars, cuidadors i professionals sanitaris supervisar i gestionar de manera remota l'estat de l'usuari i el funcionament del sistema. Aquesta plataforma actua com a punt de connexió entre el robot i les persones responsables de l'atenció, facilitant un seguiment continu sense necessitat de trobar-se físicament al domicili.
 
 A través d'un dashboard web intuïtiu, els usuaris autoritzats poden configurar els horaris de medicació, definir les dosis corresponents a cada franja horària i consultar l'historial d'entregues realitzades pel robot. Aquesta informació es sincronitza automàticament amb el sistema embarcat, permetent que el robot sàpiga en tot moment quina medicació ha de dispensar i quan ho ha de fer.
 
