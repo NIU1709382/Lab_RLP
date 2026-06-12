@@ -28,7 +28,7 @@ Aquest projecte consisteix en el desenvolupament d'un robot assistencial intel·
 
 El robot integra tecnologies de visió artificial, intel·ligència artificial, navegació autònoma i interacció per veu per actuar de manera proactiva dins de l'entorn domèstic.
 
-<img src="4_design_models/front-view.png" alt="Logo" width="300" height="200">
+<img src="4_design_models/front-view.png" alt="Logo" width="600" height="200">
 
 
 
