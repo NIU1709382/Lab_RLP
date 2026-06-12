@@ -53,7 +53,7 @@ bool actualitzarUltraso(Ultraso &u) {
         bool echo_alt = digitalRead(u.pin_echo);
 
         if (!u.eco_actiu && echo_alt) {
-            // Flac pujant: comencem a comptar
+            // Flanc pujant: comencem a comptar
             u.eco_inici  = ara_us;
             u.eco_actiu  = true;
         }
@@ -61,7 +61,12 @@ bool actualitzarUltraso(Ultraso &u) {
         if (u.eco_actiu && !echo_alt) {
             // Flanc baixant: tenim la durada
             unsigned long duracio = ara_us - u.eco_inici;
-            u.distancia_cm  = (duracio * 0.0343f) / 2.0f;
+            
+            // ── FÓRMULA CORREGIDA I OPTIMITZADA ──────────────────────────────
+            // El so triga 29.1 microsegons a fer 1 cm.
+            // Com que és anada i tornada (29.1 * 2 = ~58.2)
+            u.distancia_cm  = (float)duracio / 58.0f;
+            
             u.esperant_eco  = false;
             u.eco_actiu     = false;
             return true; // Nova mesura disponible
