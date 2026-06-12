@@ -398,12 +398,6 @@ void processarComanda(const String &cmd) {
     else if (cmd == "DISP_CERC2")  moureServo(CH_MED_2, MED2_CERCLE_DISPENSAR);
     else if (cmd == "REC_CERC2")   moureServo(CH_MED_2, MED2_CERCLE_RECOLLIR);
 
-
-    else if (cmd == "DISP4") {
-        moureServo(CH_MED_2, MED2_CERCLE_RECOLLIR);
-        moureServo(CH_MED_2, MED2_CERCLE_DISPENSAR);
-    }
-    
     // Fallback per les màquines d'estats antigues (si n'hi havia d'actuants)
     else if (cmd == "AUTO_REC1")   iniciarMedRec1();
     else if (cmd == "AUTO_REC2")   iniciarMedRec2();
