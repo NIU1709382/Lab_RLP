@@ -28,6 +28,9 @@ Aquest projecte consisteix en el desenvolupament d'un robot assistencial intel·
 
 El robot integra tecnologies de visió artificial, intel·ligència artificial, navegació autònoma i interacció per veu per actuar de manera proactiva dins de l'entorn domèstic.
 
+![care](4_design_models/front-view.png)
+
+
 
 ## Arquitectura del Repositori
 
@@ -113,6 +116,8 @@ En aquesta secció mostrem els components principals utilitzats per tal de dur a
 | **Total**                     |         |**357,55€** |
 
 Els components detallats són per a la producció d'un únic robot.
+
+
 
 ## Detalls
 
