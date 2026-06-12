@@ -204,6 +204,6 @@ Per seguir avançant en el projecte presentem diverses línies de treball que pe
 ## Desenvolupadors
 - **Martí Bertarns Arasanz** - Universitat Autònoma de Barcelona (UAB)
 - **Marc Cantero Priego** - Universitat Autònoma de Barcelona (UAB)
-- **Bernat Domene** - Universitat Autònoma de Barcelona (UAB)
+- **Bernat Domene Soler** - Universitat Autònoma de Barcelona (UAB)
 - **Martí Serra Prat** - Universitat Autònoma de Barcelona (UAB)
 - **Aina Vidal i Vázquez** - Universitat Autònoma de Barcelona (UAB) 
